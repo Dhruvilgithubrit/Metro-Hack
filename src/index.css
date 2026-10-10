@@ -47,7 +47,7 @@
   --shadow-md:  0 4px 16px rgba(0,0,0,.10);
   --shadow-lg:  0 12px 40px rgba(0,0,0,.14);
 
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font: 'Plus Jakarta Sans', 'Noto Sans Gujarati', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'SF Mono', Consolas, monospace;
 
   --nav-h:   60px;

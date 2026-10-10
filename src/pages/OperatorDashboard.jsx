@@ -281,6 +281,17 @@ export default function OperatorDashboard({ user }) {
         </div>
       </div>
 
+      {!online && (
+        <div className="offline-banner">
+          You're offline. Everything is saved on this device.
+        </div>
+      )}
+      {online && pendingSyncCount > 0 && syncing && (
+        <div className="online-banner">
+          Back online. Syncing {pendingSyncCount} items.
+        </div>
+      )}
+
       {showImport && (
         <div style={{background: 'var(--bg-card)', padding: '16px', borderBottom: '1px solid var(--border)'}}>
           <button className="btn btn-secondary btn-sm" onClick={async () => {

@@ -205,6 +205,17 @@ function AppInner() {
         </div>
       )}
 
+      {!online && (
+        <div className="offline-banner">
+          You're offline. Everything is saved on this device.
+        </div>
+      )}
+      {online && pendingSyncCount > 0 && syncing && (
+        <div className="online-banner">
+          Back online. Syncing {pendingSyncCount} items.
+        </div>
+      )}
+
       {/* Main Content Area */}
       {!showForm && (
         <>

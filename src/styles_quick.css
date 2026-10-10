@@ -1,0 +1,24 @@
+/* Quick Wins */
+.complaint-card.band-critical { border-left: 6px solid #c92a2a; }
+.complaint-card.band-high { border-left: 6px solid #e8590c; }
+.complaint-card.band-medium { border-left: 6px solid #e0a800; }
+.complaint-card.band-low { border-left: 6px solid #2f9e6e; }
+
+.offline-banner {
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: .85rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px;
+  border-bottom: 1px solid #fecaca;
+}
+.online-banner {
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: .85rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px;
+  border-bottom: 1px solid #bbf7d0;
+}
