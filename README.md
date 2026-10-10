@@ -1,16 +1,26 @@
-# React + Vite
+# Metro Triage Desk
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Problem addressed: PS-07 Every Complaint Heard
 
-Currently, two official plugins are available:
+This project is a React + Vite PWA built to modernise and streamline the complaint management system for the Gujarat Metro. Passengers report issues in various languages (Gujarati, Hindi, English, and Gujlish) across multiple channels (QR codes, app, paper forms, etc.). Urgent issues can easily get buried in the noise. This tool solves the problem by providing an automated triage pipeline and a local-first operator dashboard that works flawlessly even during network outages.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features for the Station Controller (Operator)
+- **Automated Triage Engine**: Automatically scores incoming complaints based on urgency, categorising them into specific departments (Safety, Lifts, Cleanliness, Fare, Staff, Other) using a lexicon-driven pure logic engine.
+- **Kanban-Style Dashboard**: Visualize complaints organized by department and ranked by computed urgency.
+- **Clustering**: Automatically groups related complaints (e.g., 5 people reporting the same lift failure at Thaltej Gam within 72 hours) and boosts their urgency score.
+- **Draft AI Replies**: Uses template-driven responses (in the original language of the complaint) with an optional feature to polish the tone using a local on-device AI model (Ollama).
+- **Offline First**: PWA architecture with IndexedDB caching and Service Worker precaching ensures the controller can always access and update tickets, with background sync catching up once the network returns.
 
-## React Compiler
+## What is real vs sample data
+- **Timetables**: Sourced from `public/data/metro.json` (sample data structure mapping the Ahmedabad Line 1 & 2 layout).
+- **Complaints**: `public/data/complaints.json` contains a simulated batch of 55 mixed-language, mixed-channel complaints used for testing the intake engine.
+- **Lexicon**: `public/data/lexicon.json` is a highly customised scoring dictionary containing weighted trigger words in Gujarati, Hindi, English, and Romanised Gujarati (Gujlish).
+- **Templates**: `public/data/reply_templates.json` provides the baseline official responses per department and language.
+- **Login**: Dummy authentication for demonstration purposes (simulates commuter vs. operator roles).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Offline Behavior & Sync
+The application is strictly local-first. 
+- All data is read/written to the browser's IndexedDB. 
+- The UI never halts or crashes due to network failures. 
+- A lightweight Node server (`server/server.js`) runs locally as a sync endpoint. 
+- The app polls this endpoint (every 20 seconds or upon connection restore) to reconcile timelines via timestamp-based merging. Pending changes are held in an offline outbox ("X waiting to sync").

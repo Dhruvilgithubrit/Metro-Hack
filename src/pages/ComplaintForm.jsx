@@ -1,43 +1,58 @@
 import React, { useState } from 'react';
 import { addComplaint } from '../db';
 import { showToast } from '../components/Toast';
+import lexicon from '../../public/data/lexicon.json';
+import { triage } from '../triage/triage.js';
 
 const PROBLEMS = [
-  { id: 'technical', label: 'Technical Issue', icon: '🔧' },
+  { id: 'safety', label: 'Safety', icon: '🚨' },
+  { id: 'lifts', label: 'Lifts', icon: '🛗' },
   { id: 'cleanliness', label: 'Cleanliness', icon: '🧹' },
-  { id: 'staff', label: 'Staff Behavior', icon: '👤' },
-  { id: 'safety', label: 'Safety / Security', icon: '🚨' },
-  { id: 'ac', label: 'A/C Not Working', icon: '❄️' },
+  { id: 'fare', label: 'Fare', icon: '🎟️' },
+  { id: 'staff', label: 'Staff behaviour', icon: '👤' },
   { id: 'other', label: 'Other', icon: '📋' },
+  { id: 'unsure', label: 'I\'m not sure', icon: '❓' },
 ];
 
 export default function ComplaintForm({ user, locationCtx, onBack, onSubmitSuccess }) {
   const [problemType, setProblemType] = useState(null);
-  const [severity, setSeverity] = useState('medium');
   const [desc, setDesc] = useState('');
   const [loading, setLoading] = useState(false);
   const [successData, setSuccessData] = useState(null);
 
+  React.useEffect(() => {
+    if (locationCtx.source === 'lift') setProblemType('lifts');
+    else if (locationCtx.source === 'station') setProblemType('safety'); // default hint
+  }, [locationCtx]);
+
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!problemType) { showToast('Please select a problem type', 'error'); return; }
-    if (desc.trim().length < 5) { showToast('Please provide a few details', 'error'); return; }
+    if (!problemType) { showToast('Please select a department', 'error'); return; }
+    if (desc.trim().length < 5) { showToast('Please write the problem details', 'error'); return; }
 
     setLoading(true);
     try {
-      const record = {
+      const baseRecord = {
         userId: user.id,
         userPhone: user.phone,
-        type: problemType,
-        severity,
-        desc: desc.trim(),
-        trainId: locationCtx.trainId,
-        coachId: locationCtx.coachId,
-        line: locationCtx.line,
-        direction: locationCtx.direction,
+        name: user.name || user.phone,
+        hintDept: problemType,
+        text: desc.trim(),
+        channel: 'app',
+        source: locationCtx.coachId ? 'coach' : (locationCtx.asset ? 'lift' : 'station'),
+        station: locationCtx.station || '',
+        train: locationCtx.trainId || '',
+        coach: locationCtx.coachId || '',
+        asset: locationCtx.asset || '',
+        line: locationCtx.line || '',
+        minutesAgo: 0,
+        ts: Date.now(),
       };
 
-      const saved = await addComplaint(record);
+      // Run local triage engine
+      const triagedRecord = triage(baseRecord, lexicon);
+
+      const saved = await addComplaint(triagedRecord);
       setSuccessData(saved);
       showToast('Report submitted successfully', 'success');
     } catch (err) {
@@ -56,8 +71,8 @@ export default function ComplaintForm({ user, locationCtx, onBack, onSubmitSucce
           <h2 className="success-title">Report Submitted</h2>
           <div className="success-ref">{successData.id}</div>
           <p className="success-sub">
-            Thank you. Our team has been notified. 
-            An operator is reviewing your report and will assign assistance to Train {successData.trainId}, Coach {successData.coachId} shortly.
+            Thank you. Our team has been notified.
+            {successData.train ? ` An operator is reviewing your report and will assign assistance to Train ${successData.train}, Coach ${successData.coach} shortly.` : ' We will attend to your request shortly.'}
           </p>
           <button className="btn btn-primary btn-lg btn-full" onClick={() => onSubmitSuccess(successData.id)}>
             Track Status
@@ -78,7 +93,7 @@ export default function ComplaintForm({ user, locationCtx, onBack, onSubmitSucce
         </button>
         <h2 className="form-title">Report Issue</h2>
         <div className="form-location-chip">
-          🚇 Train {locationCtx.trainId} · Coach {locationCtx.coachId}
+          {locationCtx.coachId ? `🚇 Train ${locationCtx.trainId} · Coach ${locationCtx.coachId}` : `📍 Station ${locationCtx.station}`}
         </div>
       </div>
 
@@ -88,7 +103,7 @@ export default function ComplaintForm({ user, locationCtx, onBack, onSubmitSucce
           {/* Problem Type */}
           <div className="form-section">
             <label className="form-label">
-              What is the problem? <span className="form-required">*</span>
+              Select Department <span className="form-required">*</span>
             </label>
             <div className="problem-grid">
               {PROBLEMS.map(p => (
@@ -105,32 +120,10 @@ export default function ComplaintForm({ user, locationCtx, onBack, onSubmitSucce
             </div>
           </div>
 
-          {/* Severity */}
-          <div className="form-section">
-            <label className="form-label">Severity Level</label>
-            <div className="severity-row">
-              <button 
-                type="button" 
-                className={`severity-btn low ${severity === 'low' ? 'active' : ''}`}
-                onClick={() => setSeverity('low')}
-              >Low</button>
-              <button 
-                type="button" 
-                className={`severity-btn medium ${severity === 'medium' ? 'active' : ''}`}
-                onClick={() => setSeverity('medium')}
-              >Medium</button>
-              <button 
-                type="button" 
-                className={`severity-btn high ${severity === 'high' ? 'active' : ''}`}
-                onClick={() => setSeverity('high')}
-              >High</button>
-            </div>
-          </div>
-
           {/* Description */}
           <div className="form-section">
             <label className="form-label">
-              Details <span className="form-required">*</span>
+              Details (Write in English, Hindi, or Gujarati) <span className="form-required">*</span>
             </label>
             <textarea
               className="form-textarea"

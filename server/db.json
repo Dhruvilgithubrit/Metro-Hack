@@ -1,0 +1,64 @@
+{
+  "complaints": [
+    {
+      "userId": "U-1791652392370",
+      "userPhone": "4561233845",
+      "type": "technical",
+      "severity": "medium",
+      "desc": "Handel bar is broken",
+      "trainId": "T01",
+      "coachId": "C1",
+      "line": "L1",
+      "direction": "Towards Vastral Gam",
+      "id": "C-1791652439155",
+      "createdAt": 1791652439155,
+      "synced": false,
+      "status": "assigned",
+      "statusHistory": [
+        {
+          "status": "submitted",
+          "ts": 1791652439155,
+          "note": "Report received"
+        },
+        {
+          "status": "assigned",
+          "ts": 1791653079199,
+          "note": "Status changed to Assigned to Tech"
+        }
+      ]
+    },
+    {
+      "userId": "U-1791655473377",
+      "userPhone": "4561233845",
+      "name": "Guest Rider",
+      "hintDept": "other",
+      "text": "A/C is not working",
+      "channel": "app",
+      "source": "coach",
+      "station": "",
+      "train": "T02",
+      "coach": "C2",
+      "asset": "",
+      "line": "Blue Line",
+      "minutesAgo": 0,
+      "ts": 1791655506027,
+      "lang": "en",
+      "dept": "other",
+      "secondary": [],
+      "urgency": 0,
+      "band": "low",
+      "why": [],
+      "id": "C-1791655506030",
+      "createdAt": 1791655506030,
+      "synced": false,
+      "status": "submitted",
+      "statusHistory": [
+        {
+          "status": "submitted",
+          "ts": 1791655506030,
+          "note": "Report received"
+        }
+      ]
+    }
+  ]
+}

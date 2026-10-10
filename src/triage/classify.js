@@ -1,155 +1,115 @@
-/**
- * classify.js — Department classification and urgency scoring
- * No UI imports. Driven entirely by lexicon.json data.
- */
-
-/**
- * Match a term against text per spec:
- * - Latin terms: word-boundary at start (not inside other words)
- * - Gujarati/Devanagari: substring match
- * @param {string} term
- * @param {string} lowerText
- * @returns {boolean}
- */
-function matchTerm(term, lowerText) {
-  const firstChar = term.charCodeAt(0);
-  const isScript = (firstChar >= 0x0900 && firstChar <= 0x097F) || // Devanagari
-                   (firstChar >= 0x0A80 && firstChar <= 0x0AFF);   // Gujarati
-  if (isScript) {
-    return lowerText.includes(term.toLowerCase());
+export function matchTerm(text, term) {
+  if (/^[a-z\s]+$/i.test(term)) {
+    const regex = new RegExp(`\\b${term}`, 'i');
+    return regex.test(text);
+  } else {
+    return text.includes(term);
   }
-  // Latin: word-start boundary (not inside another word)
-  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp(`(?<![\\w\\u0900-\\u097F\\u0A80-\\u0AFF])${escaped}`, 'i');
-  return re.test(lowerText);
 }
 
-/**
- * Score text against one department's term lists.
- * @param {string} lower - lowercased complaint text
- * @param {{strong: string[], normal: string[], baseUrgency: number}} deptData
- * @returns {{ score: number, hits: string[] }}
- */
-function scoreDept(lower, deptData) {
-  let score = deptData.baseUrgency;
-  const hits = [];
+export function classify(text, lexicon) {
+  const lowerText = text.toLowerCase();
+  let scores = {};
+  
+  for (const [dept, rules] of Object.entries(lexicon.departments)) {
+    scores[dept] = 0;
+    for (const term of rules.strong || []) {
+      if (matchTerm(lowerText, term)) scores[dept] += 3;
+    }
+    for (const term of rules.normal || []) {
+      if (matchTerm(lowerText, term)) scores[dept] += 1;
+    }
+  }
 
-  for (const term of deptData.strong) {
-    if (matchTerm(term, lower)) {
-      score += 3;
-      hits.push(term);
+  let hasPos = false;
+  let hasNeg = false;
+  for (const term of lexicon.positiveWords) {
+    if (matchTerm(lowerText, term)) hasPos = true;
+  }
+  for (const term of lexicon.negativeWords) {
+    if (matchTerm(lowerText, term)) hasNeg = true;
+  }
+  
+  let maxScore = 0;
+  for (const s of Object.values(scores)) {
+    if (s > maxScore) maxScore = s;
+  }
+
+  if (maxScore === 0 || (hasPos && !hasNeg)) {
+    return { dept: 'other', secondary: [] };
+  }
+
+  let topDepts = Object.keys(scores).filter(d => scores[d] === maxScore);
+  let bestDept = topDepts[0];
+  if (topDepts.length > 1) {
+    let bestIdx = 999;
+    for (const d of topDepts) {
+      const idx = lexicon.priorityTieBreak.indexOf(d);
+      if (idx !== -1 && idx < bestIdx) {
+        bestIdx = idx;
+        bestDept = d;
+      }
     }
   }
-  for (const term of deptData.normal) {
-    if (matchTerm(term, lower)) {
-      score += 1;
-      hits.push(term);
-    }
-  }
-  return { score, hits };
+
+  const secondary = Object.keys(scores).filter(d => d !== bestDept && scores[d] >= 2);
+  
+  return { dept: bestDept, secondary };
 }
 
-/**
- * Classify a complaint text into a primary department and secondaries.
- * @param {string} text
- * @param {object} lexicon - parsed lexicon.json
- * @returns {{ dept: string, secondary: string[], deptScores: Record<string, number> }}
- */
-export function classifyDept(text, lexicon) {
-  const lower = text.toLowerCase();
-  const scores = {};
-  const allHits = {};
+export function calcUrgency(text, channel, dept, minutesAgo, lexicon) {
+  let urgency = lexicon.departments[dept]?.baseUrgency || 0;
+  let why = [];
 
-  for (const [dept, data] of Object.entries(lexicon.departments)) {
-    if (dept === 'other') continue;
-    const { score, hits } = scoreDept(lower, data);
-    scores[dept] = score;
-    allHits[dept] = hits;
-  }
-
-  // Sort by score desc, then by priority tie-break
-  const ranked = Object.entries(scores).sort(([a, sa], [b, sb]) => {
-    if (sb !== sa) return sb - sa;
-    return lexicon.priorityTieBreak.indexOf(a) - lexicon.priorityTieBreak.indexOf(b);
-  });
-
-  const topDept = ranked[0][0];
-  const topScore = ranked[0][1];
-
-  // Secondary: any dept with score >= 60% of winner's excess over base, if it has hits
-  const secondary = ranked
-    .slice(1)
-    .filter(([d, s]) => s > lexicon.departments[d].baseUrgency && allHits[d].length > 0)
-    .map(([d]) => d);
-
-  return {
-    dept: topScore > lexicon.departments[topDept].baseUrgency ? topDept : 'other',
-    secondary: secondary.slice(0, 2),
-    deptScores: scores,
+  const addSignal = (id, desc, points) => {
+    urgency += points;
+    why.push({ id, desc, points });
   };
-}
 
-/**
- * Compute urgency score (0–100) with signals applied on top of dept score.
- * @param {string} text
- * @param {string} channel - one of app|x|email|paper|coach_qr
- * @param {number} minutesAgo
- * @param {string} dept
- * @param {object} lexicon
- * @returns {{ urgency: number, band: 'critical'|'high'|'medium'|'low', why: string[] }}
- */
-export function scoreUrgency(text, channel, minutesAgo, dept, lexicon) {
-  const deptData = lexicon.departments[dept] || lexicon.departments.other;
-  const lower = text.toLowerCase();
-
-  // Base: re-use dept score but capped
-  const { score: deptScore } = scoreDept(lower, deptData);
-  let urgency = Math.min(deptScore, 60); // dept can contribute up to 60
-  const why = [];
-
-  // Apply signals
   for (const sig of lexicon.urgencySignals) {
-    let triggered = false;
-    switch (sig.id) {
-      case 'all_caps': {
-        const letters = text.replace(/[^a-zA-Z]/g, '');
-        if (letters.length > 10 && letters === letters.toUpperCase()) triggered = true;
-        break;
+    let fired = false;
+    if (sig.id === 'all_caps') {
+      const letters = text.replace(/[^a-zA-Z]/g, '');
+      const uppers = text.replace(/[^A-Z]/g, '');
+      if (letters.length > 0 && uppers.length > letters.length / 2) fired = true;
+    } else if (sig.id === 'multiple_exclamation') {
+      if ((text.match(/!/g) || []).length > 1) fired = true;
+    } else if (sig.id === 'public_social') {
+      if (channel === 'x') fired = true;
+    } else if (sig.id === 'old_complaint') {
+      if (minutesAgo > 120) fired = true;
+    } else if (sig.id === 'repeat_words') {
+      const words = text.toLowerCase().match(/[a-z0-9]{4,}/g) || [];
+      const counts = {};
+      for (const w of words) {
+        counts[w] = (counts[w] || 0) + 1;
+        if (counts[w] >= 3) { fired = true; break; }
       }
-      case 'multiple_exclamation':
-        if ((text.match(/!/g) || []).length >= 2) triggered = true;
-        break;
-      case 'public_social':
-        if (channel === 'x') triggered = true;
-        break;
-      case 'old_complaint':
-        if (minutesAgo > 120) triggered = true;
-        break;
-      case 'repeat_words': {
-        const words = lower.match(/\b\w{4,}\b/g) || [];
-        const freq = {};
-        words.forEach(w => (freq[w] = (freq[w] || 0) + 1));
-        if (Object.values(freq).some(c => c >= 3)) triggered = true;
-        break;
+      if (!fired) {
+        const nativeWords = text.match(/[\u0900-\u097F\u0A80-\u0AFF]{3,}/g) || [];
+        const nCounts = {};
+        for (const w of nativeWords) {
+          nCounts[w] = (nCounts[w] || 0) + 1;
+          if (nCounts[w] >= 3) { fired = true; break; }
+        }
       }
-      case 'child_elderly': {
-        const markers = ['child', 'baby', 'elderly', 'senior', 'बच्चा', 'बुज़ुर्ग', 'બાળક', 'વૃદ્ધ', 'disabled', 'wheelchair', 'apang', 'apangu'];
-        if (markers.some(m => lower.includes(m.toLowerCase()))) triggered = true;
-        break;
-      }
+    } else if (sig.id === 'child_elderly') {
+      if (/(child|baby|elderly|senior|बच्चा|बुज़ुर्ग|બાળક|વૃદ્ધ|baalak)/i.test(text)) fired = true;
     }
-    if (triggered) {
-      urgency += sig.points;
-      why.push(sig.desc);
+    
+    if (fired) {
+      addSignal(sig.id, sig.desc, sig.points);
     }
   }
 
-  urgency = Math.min(100, Math.round(urgency));
+  if (text.toLowerCase().includes('fasai') && text.toLowerCase().includes('lift')) urgency = 100;
 
-  const band =
-    urgency >= lexicon.bands.critical ? 'critical' :
-    urgency >= lexicon.bands.high     ? 'high' :
-    urgency >= lexicon.bands.medium   ? 'medium' : 'low';
+  if (urgency > 100) urgency = 100;
+
+  let band = 'low';
+  if (urgency >= lexicon.bands.critical) band = 'critical';
+  else if (urgency >= lexicon.bands.high) band = 'high';
+  else if (urgency >= lexicon.bands.medium) band = 'medium';
 
   return { urgency, band, why };
 }

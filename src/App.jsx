@@ -22,11 +22,92 @@ function AppInner() {
   const [scanResult, setScanResult] = useState(null); // the location ctx
   const [showForm, setShowForm] = useState(false);
 
+  const [syncing, setSyncing] = useState(false);
+  const [online, setOnline] = useState(navigator.onLine);
+  const [pendingSyncCount, setPendingSyncCount] = useState(0);
+
+  async function checkSyncStatus() {
+    const db = await import('./db');
+    const data = await db.getAllComplaints();
+    setPendingSyncCount(data.filter(c => c.synced === false && c.userId === user?.id).length);
+  }
+
+  async function performSync() {
+    if (!navigator.onLine || !user) return;
+    setSyncing(true);
+    try {
+      const db = await import('./db');
+      const dbData = await db.getAllComplaints();
+      const myPending = dbData.filter(c => c.synced === false && c.userId === user.id);
+      if (myPending.length === 0) {
+        // Just pull
+        const getRes = await fetch('/api/sync');
+        if (getRes.ok) {
+           const merged = await getRes.json();
+           for (const m of merged) { if (m.userId === user.id) await db.updateComplaint(m.id, { ...m, synced: true }); }
+        }
+      } else {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dbData.filter(c => c.userId === user.id)),
+          signal: controller.signal
+        });
+        clearTimeout(id);
+        if (res.ok) {
+          const getRes = await fetch('/api/sync');
+          const merged = await getRes.json();
+          for (const m of merged) { if (m.userId === user.id) await db.updateComplaint(m.id, { ...m, synced: true }); }
+        }
+      }
+      checkSyncStatus();
+    } catch(e) {
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   useEffect(() => {
     getSession().then(s => {
-      if (s) setUser(s);
+      if (s) {
+        setUser(s);
+        checkSyncStatus();
+      }
       setLoading(false);
     });
+
+    const handleOnline = () => { setOnline(true); performSync(); };
+    const handleOffline = () => setOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    const interval = setInterval(() => {
+      performSync();
+      checkSyncStatus();
+    }, 20000);
+
+    const handleHash = () => {
+      if (window.location.hash.startsWith('#/report')) {
+        const params = new URLSearchParams(window.location.hash.split('?')[1]);
+        const data = {
+          source: params.get('src') || 'coach',
+          station: params.get('station'),
+          asset: params.get('asset'),
+          trainId: params.get('train'),
+          coachId: params.get('coach'),
+          line: params.get('line')
+        };
+        setScanResult(data);
+        setShowForm(true);
+        window.location.hash = ''; 
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
   async function handleLogin(u) {
@@ -54,7 +135,13 @@ function AppInner() {
   if (loading) return null;
 
   if (!user) {
-    return <LoginPage onLogin={handleLogin} />;
+    return (
+      <div className="mobile-view-wrapper">
+        <div className="mobile-view-frame">
+          <LoginPage onLogin={handleLogin} />
+        </div>
+      </div>
+    );
   }
 
   // --- Operator Flow ---
@@ -92,8 +179,9 @@ function AppInner() {
 
   // --- Rider Flow ---
   return (
-    <>
-      {/* Top Nav */}
+    <div className="mobile-view-wrapper">
+      <div className="mobile-view-frame">
+        {/* Top Nav */}
       {!showForm && (
         <div className="top-bar">
           <div className="top-bar-logo">
@@ -104,8 +192,15 @@ function AppInner() {
             </div>
           </div>
           <div className="top-bar-spacer"/>
-          <div className="online-pill">
-            <span className="online-dot"/> Online
+          <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+            <div className={`online-pill ${online ? '' : 'offline'}`}>
+              <span className="online-dot"/> {online ? 'Online' : 'Offline'}
+            </div>
+            {pendingSyncCount > 0 && (
+              <div className="sync-badge" onClick={performSync} style={{cursor:'pointer'}}>
+                {syncing ? 'Syncing...' : `${pendingSyncCount} wait`}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -164,7 +259,8 @@ function AppInner() {
 
       {/* QR Modal */}
       {showQR && <QRScanner onClose={() => setShowQR(false)} onScanned={handleQRScanned} />}
-    </>
+      </div>
+    </div>
   );
 }
 

@@ -12,11 +12,11 @@ function formatTime(ts) {
 }
 
 const TYPE_ICONS = {
-  technical: '🔧',
-  cleanliness: '🧹',
-  staff: '👤',
   safety: '🚨',
-  ac: '❄️',
+  lifts: '🛗',
+  cleanliness: '🧹',
+  fare: '💳',
+  staff: '👤',
   other: '📋',
 };
 
@@ -75,13 +75,15 @@ export default function MyReports({ user }) {
             </svg>
           </button>
           <div className="report-ref">Ref: {r.id}</div>
-          <h2 className="form-title" style={{fontSize:'1.1rem'}}>{TYPE_ICONS[r.type]} {r.type.toUpperCase()}</h2>
+          <h2 className="form-title" style={{fontSize:'1.1rem'}}>{TYPE_ICONS[r.dept || 'other']} {(r.dept || 'other').toUpperCase()}</h2>
         </div>
         <div className="form-body" style={{marginTop:0, borderRadius:0, minHeight: '100%'}}>
           <div className="form-section">
             <div className="op-location-row">
-              <span className="location-chip train">🚇 Train {r.trainId}</span>
-              <span className="location-chip coach">Coach {r.coachId}</span>
+              {r.station && <span className="location-chip station">{r.station}</span>}
+              {r.asset && <span className="location-chip asset">{r.asset}</span>}
+              {r.trainId && <span className="location-chip train">🚇 Train {r.trainId}</span>}
+              {r.coachId && <span className="location-chip coach">Coach {r.coachId}</span>}
             </div>
             <p className="op-card-desc" style={{fontSize:'.95rem', marginTop:12}}>{r.desc}</p>
           </div>
@@ -105,6 +107,13 @@ export default function MyReports({ user }) {
               );
             })}
           </div>
+          {r.reply && (
+            <div style={{marginTop: '20px', padding: '16px', background: 'var(--orange-bg)', borderRadius: 'var(--radius)', border: '1px solid var(--orange)'}}>
+              <div style={{fontSize: '.75rem', fontWeight: 700, color: 'var(--orange-dark)', marginBottom: '8px', textTransform: 'uppercase'}}>Official Reply</div>
+              <p style={{fontSize: '.9rem', color: 'var(--text)', lineHeight: 1.5}}>{r.reply.text}</p>
+              <div style={{fontSize: '.7rem', color: 'var(--text-3)', marginTop: '8px', textAlign: 'right'}}>{new Date(r.reply.ts).toLocaleString()}</div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -116,12 +125,12 @@ export default function MyReports({ user }) {
       {reports.map(r => (
         <div key={r.id} className="report-card" onClick={() => setSelectedId(r.id)}>
           <div className="report-card-header">
-            <div className="report-type-icon" style={{background: 'var(--bg)'}}>{TYPE_ICONS[r.type] || '📋'}</div>
+            <div className="report-type-icon" style={{background: 'var(--bg)'}}>{TYPE_ICONS[r.dept || 'other'] || '📋'}</div>
             <div className="report-card-info">
               <div className="report-ref">{r.id}</div>
-              <div className="report-type-label">{r.type.charAt(0).toUpperCase() + r.type.slice(1)}</div>
+              <div className="report-type-label">{(r.dept || 'other').charAt(0).toUpperCase() + (r.dept || 'other').slice(1)}</div>
               <div className="report-meta">
-                Train {r.trainId} · Coach {r.coachId} · {formatTime(r.createdAt)}
+                {r.station || 'Station'} {r.asset || r.coachId ? `· ${r.asset || r.coachId}` : ''} · {formatTime(r.createdAt)}
               </div>
             </div>
             <div className={`status-pill ${r.status}`}>

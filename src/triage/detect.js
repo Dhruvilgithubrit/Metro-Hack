@@ -1,40 +1,30 @@
-/**
- * detect.js — Language detection for en / hi / gu / gujlish
- * No UI imports. Pure deterministic logic.
- */
 
-// Unicode ranges
-const GU_RANGE = /[\u0A80-\u0AFF]/;
-const HI_RANGE = /[\u0900-\u097F]/;
-// Gujlish markers (romanized Gujarati)
-const GUJLISH_MARKERS = [
-  'che', 'chhe', 'nathi', 'hatu', 'avu', 'karo', 'kari', 'kyu',
-  ' thi ', ' ma ', ' nu ', ' ni ', ' no ', ' ane ', 'dhyan',
-  'taklif', 'vaas', 'varas', 'tamari', 'amari', 'aave', 'bahu',
-  'kyare', 'naikre', 'fire', 'platform par', 'khaali'
-];
+export function detectLang(text, lexicon) {
+  let guj = 0;
+  let dev = 0;
+  let lat = 0;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if (code >= 0x0A80 && code <= 0x0AFF) guj++;
+    else if (code >= 0x0900 && code <= 0x097F) dev++;
+    else if ((code >= 0x0041 && code <= 0x005A) || (code >= 0x0061 && code <= 0x007A)) lat++;
+  }
+  const total = guj + dev + lat;
+  if (total === 0) return 'en';
 
-/**
- * @param {string} text
- * @returns {'en'|'hi'|'gu'|'gujlish'}
- */
-export function detectLanguage(text) {
-  if (!text) return 'en';
+  if (guj / total > 0.3) return 'gu';
+  if (dev / total > 0.3) return 'hi';
 
-  const guCount = (text.match(new RegExp(`[\\u0A80-\\u0AFF]`, 'g')) || []).length;
-  const hiCount = (text.match(new RegExp(`[\\u0900-\\u097F]`, 'g')) || []).length;
-
-  if (guCount > 5) return 'gu';
-  if (hiCount > 5) return 'hi';
-
-  const lower = text.toLowerCase();
-  // Check gujlish markers
-  const gujlishHits = GUJLISH_MARKERS.filter(m => lower.includes(m)).length;
-  if (gujlishHits >= 2) return 'gujlish';
-
-  // Hindi common words in latin (fallback): nahi, mujhe, karo
-  const hindiRoman = ['nahi', 'mujhe', 'katuoti', 'kijiye', 'mera', 'mere'];
-  if (hindiRoman.some(w => lower.includes(w))) return 'hi';
+  const lowerText = text.toLowerCase();
+  const tokens = lowerText.split(/\W+/);
+  
+  for (const marker of lexicon.gujlishMarkers) {
+    if (marker.includes(' ')) {
+      if (lowerText.includes(marker)) return 'gujlish';
+    } else {
+      if (tokens.includes(marker)) return 'gujlish';
+    }
+  }
 
   return 'en';
 }

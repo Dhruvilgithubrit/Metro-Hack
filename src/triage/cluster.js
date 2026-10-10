@@ -1,36 +1,70 @@
-/**
- * cluster.js — Simple text similarity clustering
- * Groups complaints from same station + dept within 60 min window.
- */
+export function clusterComplaints(complaints) {
+  const clusters = {};
 
-/**
- * Assign cluster IDs to an array of triaged complaints.
- * Two complaints cluster if: same dept AND same station AND |minutesAgo diff| < 60.
- * @param {object[]} complaints - triaged complaint records
- * @returns {object[]} - complaints with clusterId set
- */
-export function assignClusters(complaints) {
-  const clusters = [];
+  const getLiftAsset = (c) => {
+    if (c.asset) return c.asset.toLowerCase();
+    const match = (c.text || '').match(/lift\s*(\d+)/i);
+    if (match) return `lift-${match[1]}`;
+    return '';
+  };
 
-  for (const c of complaints) {
-    // Find an existing cluster this complaint fits into
-    const match = clusters.find(cl =>
-      cl.dept === c.dept &&
-      cl.station === c.station &&
-      Math.abs(cl.anchorMinutes - c.minutesAgo) < 60
-    );
-    if (match) {
-      c.clusterId = match.id;
+  complaints.forEach(c => {
+    let key;
+    if (c.dept === 'lifts') {
+      const asset = getLiftAsset(c);
+      key = `lifts_${c.station || 'unknown'}_${asset}`;
     } else {
-      const newId = `CL${String(clusters.length + 1).padStart(3, '0')}`;
-      clusters.push({
-        id: newId,
-        dept: c.dept,
-        station: c.station,
-        anchorMinutes: c.minutesAgo,
-      });
-      c.clusterId = newId;
+      key = `${c.dept}_${c.station || 'unknown'}`;
     }
+    
+    if (!clusters[key]) clusters[key] = [];
+    clusters[key].push(c);
+  });
+  
+  const result = [];
+  
+  for (const [key, group] of Object.entries(clusters)) {
+    group.sort((a,b) => a.ts - b.ts);
+    
+    let currentClusterId = 0;
+    let currentSubGroup = [];
+    
+    const finishSubGroup = () => {
+      if (currentSubGroup.length === 0) return;
+      const cId = `${key}_${currentClusterId}`;
+      const extra = currentSubGroup.length - 1;
+      const boost = currentSubGroup.length >= 3 ? Math.min(15, extra * 3) : 0;
+      
+      currentSubGroup.forEach(c => {
+        const out = { ...c, clusterId: cId, clusterSize: currentSubGroup.length };
+        if (boost > 0 && !out.why?.find(w => w.id === 'cluster')) {
+          out.urgency = Math.min(100, out.urgency + boost);
+          out.why = [...(out.why || []), { id: 'cluster', desc: `Cluster of ${currentSubGroup.length} complaints`, points: boost }];
+          if (out.urgency >= 80) out.band = 'critical';
+          else if (out.urgency >= 60) out.band = 'high';
+          else if (out.urgency >= 35) out.band = 'medium';
+          else out.band = 'low';
+        }
+        result.push(out);
+      });
+    };
+    
+    for (let i = 0; i < group.length; i++) {
+      const c = group[i];
+      if (currentSubGroup.length === 0) {
+        currentSubGroup.push(c);
+      } else {
+        if (c.ts - currentSubGroup[currentSubGroup.length - 1].ts <= 72 * 3600 * 1000) {
+          currentSubGroup.push(c);
+        } else {
+          finishSubGroup();
+          currentClusterId++;
+          currentSubGroup = [c];
+        }
+      }
+    }
+    finishSubGroup();
   }
-  return complaints;
+  
+  return result;
 }
