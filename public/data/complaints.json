@@ -1,0 +1,122 @@
+[
+  {
+    "id": "C001",
+    "channel": "app",
+    "station": "Vastral Gam",
+    "minutesAgo": 5,
+    "text": "Lift is stuck between floors with 3 people inside including an elderly woman. Please help immediately!",
+    "expected": { "lang": "en", "dept": "lifts", "band": "critical" }
+  },
+  {
+    "id": "C002",
+    "channel": "x",
+    "station": "Apparel Park",
+    "minutesAgo": 12,
+    "text": "SMOKE COMING FROM PLATFORM 2 AT APPAREL PARK!!! IS ANYONE THERE??? #AhmedabadMetro #Emergency",
+    "expected": { "lang": "en", "dept": "safety", "band": "critical" }
+  },
+  {
+    "id": "C003",
+    "channel": "coach_qr",
+    "station": "Thaltej Gam",
+    "minutesAgo": 45,
+    "text": "Toilet pe paani nathi ane bahaar bahaar kachro padyo che. ek varas thi same condition che.",
+    "expected": { "lang": "gujlish", "dept": "cleanliness", "band": "medium" }
+  },
+  {
+    "id": "C004",
+    "channel": "email",
+    "station": "Motera Stadium",
+    "minutesAgo": 130,
+    "text": "मेरे अकाउंट से दो बार किराया कट गया। ₹42 की दोहरी कटौती हुई। मुझे रिफंड चाहिए और इसकी जांच होनी चाहिए।",
+    "expected": { "lang": "hi", "dept": "fare", "band": "high" }
+  },
+  {
+    "id": "C005",
+    "channel": "app",
+    "station": "Sabarmati",
+    "minutesAgo": 8,
+    "text": "The guard at Gate 3 was extremely rude and used abusive language when I asked for directions. This behaviour is unacceptable.",
+    "expected": { "lang": "en", "dept": "staff", "band": "high" }
+  },
+  {
+    "id": "C006",
+    "channel": "paper",
+    "station": "Kalupur",
+    "minutesAgo": 200,
+    "text": "લિફ્ટ બે કલાકથી બંધ છે. અપંગ મુસાફરો ને ચડવા ઉતરવા ખૂબ તકલીફ પડે છે. કૃપા કરી ઠીક કરો.",
+    "expected": { "lang": "gu", "dept": "lifts", "band": "high" }
+  },
+  {
+    "id": "C007",
+    "channel": "app",
+    "station": "Gyaspur",
+    "minutesAgo": 3,
+    "text": "There is blood on the platform. Someone may have been injured. Please send help NOW.",
+    "expected": { "lang": "en", "dept": "safety", "band": "critical" }
+  },
+  {
+    "id": "C008",
+    "channel": "x",
+    "station": "Old High Court",
+    "minutesAgo": 20,
+    "text": "Token machine pe balance nathi dekhaatu. Aaj 3 vaas same problem aavi che. Bahu bura che service!!! #MetroFail",
+    "expected": { "lang": "gujlish", "dept": "fare", "band": "high" }
+  },
+  {
+    "id": "C009",
+    "channel": "email",
+    "station": "Kankaria East",
+    "minutesAgo": 60,
+    "text": "स्टेशन पर बहुत गंदगी है। कचरा बिखरा पड़ा है। शौचालय की हालत बहुत खराब है। उल्टी की बदबू आ रही है।",
+    "expected": { "lang": "hi", "dept": "cleanliness", "band": "medium" }
+  },
+  {
+    "id": "C010",
+    "channel": "app",
+    "station": "AEC-Shreyash",
+    "minutesAgo": 90,
+    "text": "The staff member demanded extra money to help me with my luggage. I refused and he became threatening. This is bribery.",
+    "expected": { "lang": "en", "dept": "staff", "band": "critical" }
+  },
+  {
+    "id": "C011",
+    "channel": "coach_qr",
+    "station": "Vastral Gam",
+    "minutesAgo": 15,
+    "text": "AC is not working in coach 3. Very hot. baby is crying. Please fix immediately.",
+    "expected": { "lang": "en", "dept": "other", "band": "medium" }
+  },
+  {
+    "id": "C012",
+    "channel": "paper",
+    "station": "Chandkheda",
+    "minutesAgo": 180,
+    "text": "ટ્રેન ઘણી મોડી આવે છે. સ્ટેશન ઉપર ઘડિયાળ નથી. સ્ટાફ ને પૂછ્યું તો ખ્યાલ નથી એવો જવાબ આવ્યો.",
+    "expected": { "lang": "gu", "dept": "staff", "band": "medium" }
+  },
+  {
+    "id": "C013",
+    "channel": "app",
+    "station": "Ranip",
+    "minutesAgo": 2,
+    "text": "FIRE FIRE FIRE!! PLATFORM PAR DHUAN AAVE CHE!!! KHAALI KARO!!! PLEASE HELP!!!",
+    "expected": { "lang": "gujlish", "dept": "safety", "band": "critical" }
+  },
+  {
+    "id": "C014",
+    "channel": "email",
+    "station": "Gujarat University",
+    "minutesAgo": 50,
+    "text": "Escalator at exit 2 has been out of service for 3 days. I use a wheelchair and this is a serious accessibility problem. Other disabled passengers also face this issue daily.",
+    "expected": { "lang": "en", "dept": "lifts", "band": "high" }
+  },
+  {
+    "id": "C015",
+    "channel": "x",
+    "station": "Thaltej",
+    "minutesAgo": 25,
+    "text": "मेरे मोबाइल से दो बार पेमेंट कट गई, टिकट एक ही आई। ये धोखाधड़ी है! मुझे रिफंड दो नहीं तो complaint करूंगा! #AhmedabadMetro",
+    "expected": { "lang": "hi", "dept": "fare", "band": "critical" }
+  }
+]

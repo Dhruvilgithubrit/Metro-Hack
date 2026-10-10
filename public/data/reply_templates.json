@@ -1,0 +1,38 @@
+{
+  "safety": {
+    "en": "Dear passenger, we have received your safety concern (Ref: {ref}) at {station}. Our team has been immediately alerted and is responding. Please call our helpline {helpline} for urgent assistance. Your safety is our highest priority.",
+    "hi": "प्रिय यात्री, हमें {station} पर आपकी सुरक्षा शिकायत (संदर्भ: {ref}) प्राप्त हुई है। हमारी टीम को तुरंत सतर्क किया गया है। तत्काल सहायता के लिए {helpline} पर कॉल करें।",
+    "gu": "પ્રિય મુસાફર, {station} ખાતે આપની સુરક્ષા ફરિયાદ (સં: {ref}) અમને મળી છે. અમારી ટીમ તરત પ્રતિક્રિયા આપી રહી છે. તાત્કાલિક સહાય માટે {helpline} પર ફોન કરો.",
+    "gujlish": "Dear passenger, {station} par tamari safety complaint (Ref: {ref}) mali gai che. Amari team taratj respond kari rahi che. Tatkal madad mate {helpline} par call karo."
+  },
+  "lifts": {
+    "en": "Dear passenger, thank you for reporting the lift/escalator issue (Ref: {ref}) at {station}. Our maintenance team has been notified and will attend to this at the earliest. We apologise for the inconvenience.",
+    "hi": "प्रिय यात्री, {station} पर लिफ्ट/एस्केलेटर की समस्या (संदर्भ: {ref}) रिपोर्ट करने के लिए धन्यवाद। हमारी रखरखाव टीम को सूचित किया गया है। असुविधा के लिए क्षमा करें।",
+    "gu": "પ્રિય મુસાફર, {station} ખાતે લિફ્ટ/એસ્કેલેટર સમસ્યા (સં: {ref}) જણાવવા આભાર. અમારી જાળવણી ટીમ ને જાણ કરી દેવામાં આવી છે. અગવડ બદલ ક્ષમા ચાહીએ છીએ.",
+    "gujlish": "Dear passenger, {station} par lift/escalator ni problem (Ref: {ref}) janavaava aabhar. Amari maintenance team ne jaankari apai gai che. Agavad baadal maafi mangiye chhe."
+  },
+  "cleanliness": {
+    "en": "Dear passenger, we have received your cleanliness complaint (Ref: {ref}) at {station}. Our housekeeping staff has been notified and will address this promptly. Thank you for helping us maintain a clean environment.",
+    "hi": "प्रिय यात्री, {station} पर स्वच्छता शिकायत (संदर्भ: {ref}) प्राप्त हुई। हमारे सफाई कर्मचारियों को सूचित किया गया है। स्वच्छ वातावरण बनाए रखने में सहायता के लिए धन्यवाद।",
+    "gu": "પ્રિય મુસાફર, {station} ખાતે સ્વચ્છતા ફરિયાદ (સં: {ref}) મળી. અમારા સફાઈ કર્મચારીઓ ને જાણ કરવામાં આવી છે. સ્વચ્છ વાતાવરણ જળવાઈ રહે એ માટે સહકાર બદલ આભાર.",
+    "gujlish": "Dear passenger, {station} par safai ni complaint (Ref: {ref}) mali. Amara safai staff ne jaankari apai gai che. Swachh vatavaran maate tamaro sahkar khub jruri che, aabhar."
+  },
+  "fare": {
+    "en": "Dear passenger, we have received your fare/payment complaint (Ref: {ref}) at {station}. Our accounts team will review your case within 2 working days and process any applicable refund. Please keep your transaction details handy.",
+    "hi": "प्रिय यात्री, {station} पर किराया/भुगतान शिकायत (संदर्भ: {ref}) प्राप्त हुई। हमारी अकाउंट टीम 2 कार्य दिवसों में समीक्षा करेगी। कृपया लेनदेन विवरण संभाल कर रखें।",
+    "gu": "પ્રિય મુસાફર, {station} ખાતે ભાડા/ચૂકવણી ફરિયાદ (સં: {ref}) મળી. અમારી એકાઉન્ટ ટીમ 2 કાર્ય દિવસોમાં સમીક્ષા કરશે. વ્યવહારની વિગત સાચવી રાખો.",
+    "gujlish": "Dear passenger, {station} par fare/payment ni complaint (Ref: {ref}) mali. Amari accounts team 2 working days ma review karshi. Transaction details sambhali rakhjo."
+  },
+  "staff": {
+    "en": "Dear passenger, we sincerely apologise for the behaviour you experienced (Ref: {ref}) at {station}. This matter has been escalated to the Station Manager and will be investigated. We take staff conduct very seriously.",
+    "hi": "प्रिय यात्री, {station} पर आपके साथ हुए व्यवहार (संदर्भ: {ref}) के लिए हम ईमानदारी से माफी मांगते हैं। इस मामले को स्टेशन मैनेजर तक पहुंचाया गया है।",
+    "gu": "પ્રિય મુસાફર, {station} ખાતે આપ સાથે થયેલ વ્યવહાર (સં: {ref}) બદલ અમે ક્ષમા ચાહીએ છીએ. આ મામલો સ્ટેશન મૅનેજર ને સોંપવામાં આવ્યો છે.",
+    "gujlish": "Dear passenger, {station} par tamara sathe thayela vyvhar (Ref: {ref}) baadal aame saachi maafi mangiye chhe. Aa mamlo Station Manager ne soampavama aaviyo che."
+  },
+  "other": {
+    "en": "Dear passenger, thank you for reaching out (Ref: {ref}). We have received your feedback regarding {station} and will look into this matter. For urgent help please call {helpline}.",
+    "hi": "प्रिय यात्री, संपर्क करने के लिए धन्यवाद (संदर्भ: {ref})। हमें {station} के बारे में आपकी प्रतिक्रिया मिली है। तत्काल सहायता के लिए {helpline} पर कॉल करें।",
+    "gu": "પ્રિય મુસાફર, સંપર્ક કરવા બદલ આભાર (સં: {ref}). {station} વિશે આપની ફરિયાદ મળી છે. તાત્કાલિક સહાય માટે {helpline} પર ફોન કરો.",
+    "gujlish": "Dear passenger, sampark karva aabhar (Ref: {ref}). {station} baabat tamari feedback mali che. Tatkal madad mate {helpline} par call karo."
+  }
+}

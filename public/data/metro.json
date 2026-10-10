@@ -1,0 +1,66 @@
+{
+  "lines": [
+    {
+      "id": "Blue",
+      "name": "East-West Corridor",
+      "color": "#1d4ed8",
+      "colorDark": "#1e3a8a",
+      "stations": [
+        { "id": "THG", "name": "Thaltej Gam", "x": 100, "y": 340 },
+        { "id": "THT", "name": "Thaltej", "x": 140, "y": 340 },
+        { "id": "DDK", "name": "Doordarshan Kendra", "x": 180, "y": 340 },
+        { "id": "GUR", "name": "Gurukul Road", "x": 220, "y": 340 },
+        { "id": "GUJ", "name": "Gujarat University", "x": 260, "y": 340 },
+        { "id": "CSR", "name": "Commerce Six Road", "x": 300, "y": 340 },
+        { "id": "SPS", "name": "SP Stadium", "x": 340, "y": 340 },
+        { "id": "OHC", "name": "Old High Court", "x": 420, "y": 340, "interchange": true },
+        { "id": "SHA", "name": "Shahpur", "x": 470, "y": 340 },
+        { "id": "GHK", "name": "Gheekanta", "x": 510, "y": 340 },
+        { "id": "KRS", "name": "Kalupur Rly Stn", "x": 550, "y": 340 },
+        { "id": "KNE", "name": "Kankaria East", "x": 590, "y": 340 },
+        { "id": "APP", "name": "Apparel Park", "x": 630, "y": 340 },
+        { "id": "AMR", "name": "Amraiwadi", "x": 670, "y": 340 },
+        { "id": "RBC", "name": "Rabari Colony", "x": 710, "y": 340 },
+        { "id": "VAS", "name": "Vastral", "x": 750, "y": 340 },
+        { "id": "NCR", "name": "Nirant Cross Road", "x": 790, "y": 340 },
+        { "id": "VTG", "name": "Vastral Gam", "x": 830, "y": 340 }
+      ]
+    },
+    {
+      "id": "Red",
+      "name": "North-South Corridor",
+      "color": "#dc2626",
+      "colorDark": "#991b1b",
+      "stations": [
+        { "id": "MOT", "name": "Motera Stadium", "x": 420, "y": 60 },
+        { "id": "SAB", "name": "Sabarmati", "x": 420, "y": 95 },
+        { "id": "AEC", "name": "AEC", "x": 420, "y": 130 },
+        { "id": "SRS", "name": "Sabarmati Rly Stn", "x": 420, "y": 165 },
+        { "id": "RAN", "name": "Ranip", "x": 420, "y": 200 },
+        { "id": "VAD", "name": "Vadaj", "x": 420, "y": 235 },
+        { "id": "VIJ", "name": "Vijaynagar", "x": 420, "y": 270 },
+        { "id": "USM", "name": "Usmanpura", "x": 420, "y": 305 },
+        { "id": "OHC", "name": "Old High Court", "x": 420, "y": 340, "interchange": true },
+        { "id": "GGR", "name": "Gandhigram", "x": 420, "y": 375 },
+        { "id": "PAL", "name": "Paldi", "x": 420, "y": 410 },
+        { "id": "SHR", "name": "Shreyas", "x": 420, "y": 445 },
+        { "id": "RJV", "name": "Rajiv Nagar", "x": 420, "y": 480 },
+        { "id": "JVP", "name": "Jivraj Park", "x": 420, "y": 515 },
+        { "id": "APM", "name": "APMC", "x": 420, "y": 550 }
+      ]
+    }
+  ],
+  "interchange": { "stationId": "OHC", "name": "Old High Court" },
+  "trains": [
+    { "id": "T01", "line": "Blue", "coaches": ["C1","C2","C3","C4","C5","C6"] },
+    { "id": "T02", "line": "Blue", "coaches": ["C1","C2","C3","C4","C5","C6"] },
+    { "id": "T03", "line": "Red", "coaches": ["C1","C2","C3","C4","C5","C6"] },
+    { "id": "T04", "line": "Red", "coaches": ["C1","C2","C3","C4","C5","C6"] }
+  ],
+  "users": [
+    { "id": "U001", "phone": "9876543210", "name": "Arjun Patel", "avatar": "AP", "role": "rider" },
+    { "id": "U002", "phone": "9876543211", "name": "Priya Shah",  "avatar": "PS", "role": "rider" },
+    { "id": "U003", "phone": "9876543212", "name": "Rahul Mehta", "avatar": "RM", "role": "rider" },
+    { "id": "U005", "phone": "operator1",  "name": "Station Ctrl","avatar": "SC", "role": "operator" }
+  ]
+}

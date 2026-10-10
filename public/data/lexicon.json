@@ -1,0 +1,51 @@
+{
+  "departments": {
+    "safety": {
+      "baseUrgency": 30,
+      "strong": ["fire", "smoke", "accident", "injury", "injured", "faint", "unconscious", "assault", "fight", "threat", "bomb", "blood", "bleeding", "emergency", "ambulance", "police", "आग", "धुआं", "दुर्घटना", "चोट", "बेहोश", "हमला", "आपातकाल", "આગ", "ધુમાડો", "અકસ્માત", "ઈજા", "બેભાન", "હુમલો", "કટોકટી"],
+      "normal": ["dangerous", "unsafe", "risk", "hazard", "slippery", "broken", "platform gap", "खतरा", "असुरक्षित", "जोखिम", "खतरनाक", "ભયજનક", "અસુરક્ષિત", "જોખમ"]
+    },
+    "lifts": {
+      "baseUrgency": 15,
+      "strong": ["lift stuck", "elevator stuck", "trapped", "stuck in lift", "lift not working", "लिफ्ट बंद", "लिफ्ट फंसा", "फंसा हुआ", "લિફ્ટ બંધ", "લિફ્ટ ફસાઈ", "ફસાઈ ગયા"],
+      "normal": ["lift", "elevator", "escalator", "disabled", "wheelchair", "लिफ्ट", "एस्केलेटर", "विकलांग", "व्हीलचेयर", "લિફ્ટ", "એસ્કેલેટર", "અપંગ", "વ્હીલચેર"]
+    },
+    "cleanliness": {
+      "baseUrgency": 5,
+      "strong": ["vomit", "urine", "toilet", "sewage", "stench", "stink", "उल्टी", "पेशाब", "शौचालय", "दुर्गंध", "ઉલ્ટી", "પેશાબ", "શૌચાલય", "દુર્ગંધ"],
+      "normal": ["dirty", "garbage", "trash", "litter", "clean", "cleaning", "sweep", "गंदा", "कचरा", "सफाई", "ગંદુ", "કચરો", "સફાઈ"]
+    },
+    "fare": {
+      "baseUrgency": 10,
+      "strong": ["overcharged", "double debit", "refund", "fraud", "scam", "ज्यादा काटा", "डबल कटौती", "धोखाधड़ी", "वापसी", "વધારે કપાયા", "ડબલ ડેબિટ", "છેતરપિંડી", "રિફંડ"],
+      "normal": ["token", "card", "balance", "fare", "ticket", "gate", "टोकन", "कार्ड", "बैलेंस", "किराया", "टिकट", "ટોકન", "કાર્ડ", "બૅલૅન્સ", "ભાડું", "ટિકિટ"]
+    },
+    "staff": {
+      "baseUrgency": 15,
+      "strong": ["rude", "abusive", "misbehave", "harass", "bribe", "demand money", "बदतमीज", "अभद्र", "उत्पीड़न", "रिश्वत", "ગુસ્સો", "અભદ્ર", "ઉત્પીડન", "લાંચ"],
+      "normal": ["staff", "officer", "guard", "help", "unhelpful", "ignored", "कर्मचारी", "अधिकारी", "गार्ड", "मदद", "કર્મચારી", "અધિકારી", "ગાર્ડ", "મદદ"]
+    },
+    "other": {
+      "baseUrgency": 0,
+      "strong": [],
+      "normal": []
+    }
+  },
+  "priorityTieBreak": ["safety", "lifts", "staff", "fare", "cleanliness", "other"],
+  "urgencySignals": [
+    { "id": "all_caps", "desc": "Mostly uppercase text", "points": 10 },
+    { "id": "multiple_exclamation", "desc": "Multiple exclamation marks", "points": 8 },
+    { "id": "public_social", "desc": "Posted on X (public)", "points": 20 },
+    { "id": "old_complaint", "desc": "Reported >120 min ago and still open", "points": 15 },
+    { "id": "repeat_words", "desc": "Key word repeated 3+ times", "points": 10 },
+    { "id": "child_elderly", "desc": "Mentions child, baby, elderly, senior, बच्चा, बुज़ुर्ग, બાળક, વૃદ્ધ", "points": 12 }
+  ],
+  "positiveWords": ["thank", "thanks", "good", "great", "excellent", "धन्यवाद", "अच्छा", " આભાર", "સારું"],
+  "negativeWords": ["not", "no", "never", "didn't", "don't", "नहीं", "ना", "નહીં", "ના"],
+  "gujlishMarkers": ["che", "chhe", "nathi", "hatu", "hatu", "avu", "karo", "kari", "kyu", "thi", "ma", "nu", "ni", "no", "ane"],
+  "bands": {
+    "critical": 80,
+    "high": 60,
+    "medium": 35
+  }
+}
